@@ -10,10 +10,7 @@ contract TollBoothOperatorI {
      * @param secret The secret to be hashed.
      * @return the hashed secret.
      */
-    function hashSecret(bytes32 secret)
-        constant
-        public
-        returns(bytes32 hashed);
+    function hashSecret(bytes32 secret) constant public returns(bytes32 hashed);
 
     /**
      * Event emitted when a vehicle made the appropriate deposit to enter the road system.
@@ -22,11 +19,7 @@ contract TollBoothOperatorI {
      * @param exitSecretHashed A hashed secret that, when solved, allows the operator to pay itself.
      * @param depositedWeis The amount that was deposited as part of the entry.
      */
-    event LogRoadEntered(
-        address indexed vehicle,
-        address indexed entryBooth,
-        bytes32 indexed exitSecretHashed,
-        uint depositedWeis);
+    event LogRoadEntered( address indexed vehicle, address indexed entryBooth, bytes32 indexed exitSecretHashed, uint depositedWeis);
 
     /**
      * Called by the vehicle entering a road system.
@@ -49,15 +42,10 @@ contract TollBoothOperatorI {
      *     The hashed secret used to deposit.
      *     The amount deposited by the vehicle.
      */
-    function enterRoad(
-            address entryBooth,
-            bytes32 exitSecretHashed)
-        public
-        payable
-        returns (bool success);
+    function enterRoad(address entryBooth,bytes32 exitSecretHashed) public payable returns (bool success);
 
     /**
-     * @param exitSecretHashed The hashed secret used by the vehicle when entering the road.
+    * @param exitSecretHashed The hashed secret used by the vehicle when entering the road.
      * @return The information pertaining to the entry of the vehicle.
      *     vehicle: the address of the vehicle that entered the system.
      *     entryBooth: the address of the booth the vehicle entered at.
@@ -65,13 +53,7 @@ contract TollBoothOperatorI {
      * After the vehicle has exited, `depositedWeis` should be returned as `0`.
      * If no vehicles had ever entered with this hash, all values should be returned as `0`.
      */
-    function getVehicleEntry(bytes32 exitSecretHashed)
-        constant
-        public
-        returns(
-            address vehicle,
-            address entryBooth,
-            uint depositedWeis);
+    function getVehicleEntry(bytes32 exitSecretHashed) constant public returns(address vehicle,address entryBooth,uint depositedWeis);
 
     /**
      * Event emitted when a vehicle exits a road system.
@@ -81,11 +63,7 @@ contract TollBoothOperatorI {
      * @param finalFee The toll charge effectively paid by the vehicle, and taken from the deposit.
      * @param refundWeis The amount refunded to the vehicle, i.e. deposit - charge.
      */
-    event LogRoadExited(
-        address indexed exitBooth,
-        bytes32 indexed exitSecretHashed,
-        uint finalFee,
-        uint refundWeis);
+    event LogRoadExited( address indexed exitBooth, bytes32 indexed exitSecretHashed, uint finalFee, uint refundWeis);
 
     /**
      * Event emitted when a vehicle used a route that has no known fee.
@@ -94,10 +72,7 @@ contract TollBoothOperatorI {
      * @param entryBooth The address of the booth the vehicle entered at.
      * @param exitBooth The address of the booth the vehicle exited at.
      */
-    event LogPendingPayment(
-        bytes32 indexed exitSecretHashed,
-        address indexed entryBooth,
-        address indexed exitBooth);
+    event LogPendingPayment( bytes32 indexed exitSecretHashed, address indexed entryBooth, address indexed exitBooth);
 
     /**
      * Called by the exit booth.
@@ -120,9 +95,7 @@ contract TollBoothOperatorI {
      *       The entry booth of the vehicle trip.
      *       The exit booth of the vehicle trip.
      */
-    function reportExitRoad(bytes32 exitSecretClear)
-        public
-        returns (uint status);
+    function reportExitRoad(bytes32 exitSecretClear) public returns (uint status);
 
     /**
      * @param entryBooth the entry booth that has pending payments.
@@ -130,10 +103,7 @@ contract TollBoothOperatorI {
      * @return the number of payments that are pending because the price for the
      * entry-exit pair was unknown.
      */
-    function getPendingPaymentCount(address entryBooth, address exitBooth)
-        constant
-        public
-        returns (uint count);
+    function getPendingPaymentCount(address entryBooth, address exitBooth) constant public returns (uint count);
 
     /**
      * Can be called by anyone. In case more than 1 payment was pending when the oracle gave a price.
@@ -151,31 +121,21 @@ contract TollBoothOperatorI {
      *       The effective charge paid by the vehicle.
      *       The amount refunded to the vehicle.
      */
-    function clearSomePendingPayments(
-            address entryBooth,
-            address exitBooth,
-            uint count)
-        public
-        returns (bool success);
+    function clearSomePendingPayments(address entryBooth,address exitBooth,uint count) public returns (bool success);
 
     /**
      * @return The amount that has been collected through successful payments. This is the current
      *   amount, it does not reflect historical fees. So this value goes back to zero after a call
      *   to `withdrawCollectedFees`.
      */
-    function getCollectedFeesAmount()
-        constant
-        public
-        returns(uint amount);
+    function getCollectedFeesAmount() constant public returns(uint amount);
 
     /**
      * Event emitted when the owner collects the fees.
      * @param owner The account that sent the request.
      * @param amount The amount collected.
      */
-    event LogFeesCollected(
-        address indexed owner,
-        uint amount);
+    event LogFeesCollected( address indexed owner, uint amount);
 
     /**
      * Called by the owner of the contract to withdraw all collected fees (not deposits) to date.
@@ -187,9 +147,7 @@ contract TollBoothOperatorI {
      *     The sender of the action.
      *     The amount collected.
      */
-    function withdrawCollectedFees()
-        public
-        returns(bool success);
+    function withdrawCollectedFees() public returns(bool success);
 
     /**
      * This function is commented out otherwise it prevents compilation of the completed contracts.

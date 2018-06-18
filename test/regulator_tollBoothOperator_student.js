@@ -56,7 +56,9 @@ contract('Regulator, Toll Booth Operator', function(accounts) {
 
         it("should be possible to create an operator", function() {
             return regulator.createNewOperator.call(owner1, deposit0, { from: owner0 })
-                .then(operator => assert.isTrue(isAddress(operator)))
+                .then(operator => {
+                    assert.isTrue(isAddress(operator));
+                })
                 .then(() => regulator.createNewOperator(owner1, deposit0, { from: owner0 }))
                 .then(tx => {
                     assert.strictEqual(tx.receipt.logs.length, 2);
@@ -67,7 +69,6 @@ contract('Regulator, Toll Booth Operator', function(accounts) {
                     operator0 = logCreated.args.newOperator;
                     assert.strictEqual(logCreated.args.owner, owner1);
                     assert.strictEqual(logCreated.args.depositWeis.toNumber(), deposit0);
-
                     const logChangedOwner = tx.logs[0];
                     assert.strictEqual(logChangedOwner.event, "LogOwnerSet");
                     assert.strictEqual(logChangedOwner.address, operator0);
@@ -87,6 +88,15 @@ contract('Regulator, Toll Booth Operator', function(accounts) {
                     });
                 })
                 .then(results => {
+                    // console.log(results.regulator, ", false");
+                    // console.log(results.operator0, ", true");
+                    // console.log(results.owner0, ", false");
+                    // console.log(results.owner1, ", false");
+                    // console.log(results.owner1, ", false");
+                    // console.log(results.zero, ", false");
+                    // console.log(results.owner, ", ", owner1);
+                    // console.log(results.deposit.toNumber(), ", ", deposit0);
+                    // console.log(results.regulated, ", ", regulator.address);
                     assert.isFalse(results.regulator);
                     assert.isTrue(results.operator0);
                     assert.isFalse(results.owner0);

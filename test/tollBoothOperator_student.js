@@ -55,7 +55,9 @@ contract('TollBoothOperator', function(accounts) {
 
         it("should be possible to deploy a TollBoothOperator with parameters - 1", function() {
             return TollBoothOperator.new(false, deposit0, owner0, { from: owner1 })
-                .then(instance => operator = instance)
+                .then(instance => {
+                    operator = instance;
+                })
                 .then(() => operator.isPaused())
                 .then(paused => assert.isFalse(paused))
                 .then(() => operator.getDeposit())

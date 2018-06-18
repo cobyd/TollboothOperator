@@ -24,7 +24,7 @@ contract OwnedI {
     /**
      * @return The owner of this contract.
      */
-    function getOwner() constant public returns(address owner);
+    function getOwner() constant public returns(address _owner);
 
     /*
      * You need to create:
