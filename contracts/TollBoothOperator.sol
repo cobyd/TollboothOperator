@@ -116,7 +116,7 @@ contract TollBoothOperator is Pausable, Regulated, MultiplierHolder, DepositHold
                 VehicleOnRoad storage _entry = enteredVehicles[exitSecretHashed];
                 uint vehiclePrice = price * _entry.multiplier;
                 uint refund;
-                if(vehiclePrice >= _entry.depositedWeis) {
+                if(vehiclePrice > _entry.depositedWeis) {
                     vehiclePrice = _entry.depositedWeis;
                 } else {
                     refund = _entry.depositedWeis - vehiclePrice;
