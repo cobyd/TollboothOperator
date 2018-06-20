@@ -163,8 +163,6 @@ contract("Scenarios", accounts => {
             assert.equal(8 * multiplier0, tx.logs[1].args.refundWeis.toNumber());
         })
         .then(() => tollBoothOperator.clearSomePendingPayments(booth1, booth0, 1))
-        .then(tx => {
-            assert.equal(3 * multiplier1, tx.logs[0].args.refundWeis.toNumber());
-        })
+        .then(tx => assert.equal(3 * multiplier1, tx.logs[0].args.refundWeis.toNumber()))
     });
 });
