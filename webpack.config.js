@@ -1,40 +1,40 @@
 const path = require('path');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
+
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
+  template: './client/index.html',
+  filename: 'index.html',
+  inject: 'body'
+})
 
 module.exports = {
-  entry: './app/javascripts/app.js',
+  entry: './client/index.js',
   output: {
-    path: path.resolve(__dirname, 'build'),
-    filename: 'app.js'
+    path: path.resolve('dist'),
+    filename: 'index_bundle.js'
   },
-  plugins: [
-    // Copy our app's index.html to the build folder.
-    new CopyWebpackPlugin([
-      { from: './app/index.html', to: "index.html" }
-    ])
-  ],
   module: {
     rules: [
-      {
-       test: /\.css$/,
-       use: [ 'style-loader', 'css-loader' ]
-      }
-    ],
-    loaders: [
-      { test: /\.json$/, use: 'json-loader' },
+      { test: /\.css$/,
+        use: [
+          { loader: "style-loader" },
+          { loader: "css-loader" }
+        ]
+      },
       {
         test: /\.js$/,
-        exclude: /(node_modules|bower_components)/,
-        loader: 'babel-loader',
-        query: {
-          presets: ['es2015'],
-          plugins: ['transform-runtime']
-        }
+        exclude: /node_modules/,
+        use: "babel-loader"
+      }, {
+        test: /\.jsx?$/,
+        exclude: /node_modules/,
+        use: "babel-loader"
       }
     ]
   },
   devServer: {
-    host: '0.0.0.0',
-    port: 8000
-  }
+    inline:true,
+    port: 8008
+  },
+  plugins: [HtmlWebpackPluginConfig]
 }

@@ -30,6 +30,8 @@ Vagrant.configure("2") do |config|
     dapps.vm.network :forwarded_port, guest: 4001, host: 4001
     dapps.vm.network :forwarded_port, guest: 5001, host: 5001
     dapps.vm.network :forwarded_port, guest: 8080, host: 8080
+    dapps.vm.network :forwarded_port, guest: 8008, host: 8008
+    dapps.vm.network :forwarded_port, guest: 9545, host: 9545
 
     dapps.vm.provider "virtualbox" do |v|
       host = RbConfig::CONFIG['host_os']
