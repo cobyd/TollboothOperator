@@ -1,0 +1,26 @@
+To run the UI, run `npm install`, then run `npm run start`
+
+The UI will be served on localhost:8008
+
+The UI is configured to make RPC requests to localhost:9545, but you can configure it to send to 8545 in line 24 of utils/getWeb3.js
+
+I apologize for the lack of usability, although I think I technically implemented all of the requested features, I didn't give myself enough time to really make the experience good.  I'm not naturally very good at UI anyways.
+
+I recomend using a developer view in your browser to see whether things succeed or fail
+
+There are 2 pages, one for the regulator contract, one for the tollBoothOperator contract.
+
+The path "/" is for regulators.  The path "/tollbooth_operator" is for TBO's
+
+First, go to the regulator page and create a regulator. Keep a text file open to keep track of contract addresses.
+
+Create a regulator.  From there you can interact with the regulator contract.
+
+When ready, create a tollBoothOperator, then click on "get tollbooth operators" to make sure the most up to date info is displayed.
+
+Go to the tollbooth_operator page and load one from the address you should have copied
+
+You can mess around here as much as you want.  Transactions will fail when they should, but I did not implement any good user alerting
+
+There are funcitons that will clear state but the values will visually remain.  If you get ethereum errors that you do not expect, try deleting and pasting fresh values into the input fields
+
