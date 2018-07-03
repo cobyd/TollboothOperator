@@ -9,7 +9,7 @@ contract Pausable is Owned {
     }
     
     event LogPausedSet(address indexed sender, bool indexed newPausedState);
-    function setPaused(bool newState) public returns(bool success) {
+    function setPaused(bool newState) public fromOwner returns(bool success) {
         paused = newState;
         emit LogPausedSet(msg.sender, newState);
         return true;

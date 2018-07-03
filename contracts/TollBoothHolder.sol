@@ -7,7 +7,7 @@ contract TollBoothHolder is Owned, TollBoothHolderI {
     function TollBoothHolder() public {}
     
     event LogTollBoothAdded(address indexed sender, address indexed tollBooth);
-    function addTollBooth(address tollBooth) public returns(bool success) {
+    function addTollBooth(address tollBooth) public fromOwner returns(bool success) {
         tollBooths[tollBooth] = true;
         emit LogTollBoothAdded(msg.sender, tollBooth);
         return true;
@@ -18,7 +18,7 @@ contract TollBoothHolder is Owned, TollBoothHolderI {
     }
     
     event LogTollBoothRemoved(address indexed sender, address indexed tollBooth);
-    function removeTollBooth(address tollBooth) public returns(bool success) {
+    function removeTollBooth(address tollBooth) public fromOwner returns(bool success) {
         tollBooths[tollBooth] = false;
         emit LogTollBoothRemoved(msg.sender, tollBooth);
         return true;

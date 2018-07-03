@@ -9,8 +9,10 @@ contract DepositHolder is Owned, DepositHolderI {
         deposit = _deposit;
     }
     
+    event LogDepositSet(address indexed sender, uint depositWeis);
     function setDeposit(uint depositWeis)  public fromOwner returns(bool success) {
         deposit = depositWeis;
+        emit LogDepositSet(msg.sender, depositWeis);
         return true;
     }
     
