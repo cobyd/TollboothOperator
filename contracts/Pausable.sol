@@ -1,7 +1,7 @@
 pragma solidity ^0.4.21;
 import "./Owned.sol";
 import "./interfaces/PausableI.sol";
-contract Pausable is Owned {
+contract Pausable is Owned, PausableI {
     bool internal paused;
     
     function Pausable(bool initialPausedState) public {

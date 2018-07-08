@@ -2,7 +2,7 @@ pragma solidity ^0.4.21;
 import "./Owned.sol";
 import "./interfaces/RoutePriceHolderI.sol";
 import "./TollBoothHolder.sol";
-contract RoutePriceHolder is Owned, RoutePriceHolderI, TollBoothHolder {
+contract RoutePriceHolder is TollBoothHolder, RoutePriceHolderI {
     mapping(bytes32 => uint) internal routePrices;
     
     function RoutePriceHolder() public {}
