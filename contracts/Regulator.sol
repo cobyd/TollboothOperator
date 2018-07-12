@@ -11,6 +11,8 @@ contract Regulator is Owned, RegulatorI {
     event LogVehicleTypeSet(address indexed sender, address indexed vehicle, uint indexed vehicleType);
     
     function setVehicleType(address vehicle, uint vehicleType) public fromOwner returns(bool success) {
+        require(vehicle > 0);
+        require(vehicles[vehicle] != vehicleType);
         vehicles[vehicle] = vehicleType;
         emit LogVehicleTypeSet(msg.sender, vehicle, vehicleType);
         return true;

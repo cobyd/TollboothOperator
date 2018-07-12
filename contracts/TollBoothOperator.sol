@@ -68,10 +68,14 @@ contract TollBoothOperator is Pausable, Regulated, MultiplierHolder, DepositHold
      Will roll back if:
      - Vehicle is not registered with regulator
      - Message value is not >= required deposit for given toll booth operator
+     - Entry booth is not a toll booth
+     - Secret has been used before
      Creates a new VehicleEntry and adds it to the mapping enteredVehicles, keyed on its exit secret hash
     */
     event LogRoadEntered( address indexed vehicle, address indexed entryBooth, bytes32 indexed exitSecretHashed, uint depositedWeis);
     function enterRoad(address entryBooth, bytes32 exitSecretHashed) public payable whenNotPaused returns (bool success) {
+        require(isTollBooth(entryBooth));
+        require(!usedEntrySecret(exitSecretHashed));
         Regulator _regulator = Regulator(getRegulator());
         uint multiplier = multipliers[_regulator.vehicles(msg.sender)];
         require(multiplier > 0);
@@ -85,6 +89,7 @@ contract TollBoothOperator is Pausable, Regulated, MultiplierHolder, DepositHold
      Called by a toll booth on behalf of 1 vehicle
      Will roll back if:
      - Message sender is not a valid toll booth for given toll booth operator
+     - Vehicle is not registered
      - hashed exit secret does not find a valid VehicleEntry
      If a route price is set between the vehicle's entry booth and message sender:
      - Processes the payment
@@ -96,9 +101,11 @@ contract TollBoothOperator is Pausable, Regulated, MultiplierHolder, DepositHold
     function reportExitRoad(bytes32 exitSecretClear) public whenNotPaused returns (uint status) {
         require(isTollBooth(msg.sender));
         bytes32 exitSecretHashed = hashSecret(exitSecretClear);
+        require(!usedExitSecret(exitSecretHashed));
         VehicleEntry storage _entry = enteredVehicles[exitSecretHashed];
-        require (_entry.vehicle > 0);
+        require(isVehicle(_entry.vehicle));
         address entryBooth = _entry.entryBooth;
+        require(entryBooth != msg.sender);
         uint routePrice = routePrices[keccak256(entryBooth, msg.sender)];
         if(routePrice > 0) {
             uint refund;
@@ -179,6 +186,21 @@ contract TollBoothOperator is Pausable, Regulated, MultiplierHolder, DepositHold
 
     function hashSecret(bytes32 secret) constant public returns(bytes32 hashed) {
         return keccak256(secret);
+    }
+
+    function usedEntrySecret(bytes32 exitSecretHashed) constant public returns(bool) {
+        return enteredVehicles[exitSecretHashed].vehicle != 0;
+    }
+
+    function usedExitSecret(bytes32 exitSecretHashed) constant public returns(bool) {
+        return enteredVehicles[exitSecretHashed].vehicle != 0 &&
+            enteredVehicles[exitSecretHashed].depositedWeis == 0;
+    }
+
+    function isVehicle(address vehicle) constant public returns(bool) {
+        require(vehicle != 0);
+        Regulator _regulator = Regulator(getRegulator());
+        return _regulator.vehicles(vehicle) > 0;
     }
 
     /*

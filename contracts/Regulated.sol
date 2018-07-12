@@ -10,6 +10,8 @@ contract Regulated is RegulatedI {
     
     event LogRegulatorSet(address indexed previousRegulator, address indexed newRegulator);
     function setRegulator(address newRegulator) public onlyRegulator returns(bool success) {
+        require(newRegulator > 0);
+        require(newRegulator != regulator);
         emit LogRegulatorSet(regulator, newRegulator);
         regulator = newRegulator;
         return true;

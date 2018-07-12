@@ -11,6 +11,8 @@ contract DepositHolder is Owned, DepositHolderI {
     
     event LogDepositSet(address indexed sender, uint depositWeis);
     function setDeposit(uint depositWeis)  public fromOwner returns(bool success) {
+        require(depositWeis > 0);
+        require(depositWeis != deposit);
         deposit = depositWeis;
         emit LogDepositSet(msg.sender, depositWeis);
         return true;
