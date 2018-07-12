@@ -75,7 +75,7 @@ contract TollBoothOperator is Pausable, Regulated, MultiplierHolder, DepositHold
     event LogRoadEntered( address indexed vehicle, address indexed entryBooth, bytes32 indexed exitSecretHashed, uint depositedWeis);
     function enterRoad(address entryBooth, bytes32 exitSecretHashed) public payable whenNotPaused returns (bool success) {
         require(isTollBooth(entryBooth));
-        require(!usedEntrySecret(exitSecretHashed));
+        require(enteredVehicles[exitSecretHashed].vehicle == 0);
         Regulator _regulator = Regulator(getRegulator());
         uint multiplier = multipliers[_regulator.vehicles(msg.sender)];
         require(multiplier > 0);
@@ -101,9 +101,13 @@ contract TollBoothOperator is Pausable, Regulated, MultiplierHolder, DepositHold
     function reportExitRoad(bytes32 exitSecretClear) public whenNotPaused returns (uint status) {
         require(isTollBooth(msg.sender));
         bytes32 exitSecretHashed = hashSecret(exitSecretClear);
-        require(!usedExitSecret(exitSecretHashed));
+        require(
+            // Any entered vehicle will exist, and have a non-zero deposit
+            enteredVehicles[exitSecretHashed].vehicle != 0 &&
+            enteredVehicles[exitSecretHashed].depositedWeis != 0
+        );
         VehicleEntry storage _entry = enteredVehicles[exitSecretHashed];
-        require(isVehicle(_entry.vehicle));
+        require(Regulator(getRegulator()).vehicles(_entry.vehicle) > 0);
         address entryBooth = _entry.entryBooth;
         require(entryBooth != msg.sender);
         uint routePrice = routePrices[keccak256(entryBooth, msg.sender)];
@@ -186,21 +190,6 @@ contract TollBoothOperator is Pausable, Regulated, MultiplierHolder, DepositHold
 
     function hashSecret(bytes32 secret) constant public returns(bytes32 hashed) {
         return keccak256(secret);
-    }
-
-    function usedEntrySecret(bytes32 exitSecretHashed) constant public returns(bool) {
-        return enteredVehicles[exitSecretHashed].vehicle != 0;
-    }
-
-    function usedExitSecret(bytes32 exitSecretHashed) constant public returns(bool) {
-        return enteredVehicles[exitSecretHashed].vehicle != 0 &&
-            enteredVehicles[exitSecretHashed].depositedWeis == 0;
-    }
-
-    function isVehicle(address vehicle) constant public returns(bool) {
-        require(vehicle != 0);
-        Regulator _regulator = Regulator(getRegulator());
-        return _regulator.vehicles(vehicle) > 0;
     }
 
     /*
